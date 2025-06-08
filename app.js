@@ -14,6 +14,8 @@ const hpp = require('hpp');
 const {createClient} = require('redis');
 const {RedisStore} = require('connect-redis');
 
+dotenv.config();
+
 const redisClient = createClient({
         url:`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
         password : process.env.REDIS_PASSWORD
@@ -25,21 +27,6 @@ let redisStore = new RedisStore({
     client: redisClient
 })
 
-// await client.set("key","value");
-
-// let redisStore = new RedisStore({
-//     client : createClient.createClient(),
-//     prefix: "redis:",
-// })
-
-dotenv.config();
-// const redisClient = ({
-//     url:`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-//     password : process.env.REDIS_PASSWORD,
-//     legacyMode: true
-// });
-
-// redisClient.connect().catch(console.error);
 
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
