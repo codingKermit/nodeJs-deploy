@@ -11,17 +11,36 @@ const passport = require('passport');
 const passportConfig = require('./passport');
 const helmet = require('helmet');
 const hpp = require('hpp');
-const redis = require('redis');
-const RedisStore = require('connect-redis')(session);
+const {createClient} = require('redis');
+const {RedisStore} = require('connect-redis');
+
+const redisClient = createClient({
+        url:`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+        password : process.env.REDIS_PASSWORD
+    })
+    .on("error",(err)=>console.log("Redis Client Error",err))
+    .connect();
+
+let redisStore = new RedisStore({
+    client: redisClient
+})
+
+// await client.set("key","value");
+
+// let redisStore = new RedisStore({
+//     client : createClient.createClient(),
+//     prefix: "redis:",
+// })
 
 dotenv.config();
-const redisClient = redis.createClient({
-    url:`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-    password : process.env.REDIS_PASSWORD,
-    legacyMode: true
-});
+// const redisClient = ({
+//     url:`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+//     password : process.env.REDIS_PASSWORD,
+//     legacyMode: true
+// });
 
-redisClient.connect().catch(console.error);
+// redisClient.connect().catch(console.error);
+
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
@@ -35,7 +54,7 @@ const sessionOption = {
         httpOnly:true,
         secure:false
     },
-    store: new RedisStore({client:redisClient})
+    store:redisStore
 }
 
 const app = express();
