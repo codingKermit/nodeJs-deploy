@@ -33,6 +33,8 @@ const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
 
+console.log(">>> COOKIE_SECRET:", process.env.COOKIE_SECRET);
+
 const sessionOption = {
     resave:false,
     saveUninitialized:false,
