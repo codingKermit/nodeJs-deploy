@@ -27,7 +27,8 @@ const initApp = async()=>{
             url:`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
             password : process.env.REDIS_PASSWORD
         });
-    redisClient.connect().catch(console.error);
+    redisClient.on('error', (err) => console.error('Redis Client Error', err));
+    await redisClient.connect();
 
     let redisStore = new RedisStore({
         client: redisClient
