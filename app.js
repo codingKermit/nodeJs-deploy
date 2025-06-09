@@ -16,16 +16,15 @@ const {RedisStore} = require('connect-redis');
 
 dotenv.config();
 
-// const redisClient = createClient({
-//         url:`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-//         password : process.env.REDIS_PASSWORD
-//     })
-//     .on("error",(err)=>console.log("Redis Client Error",err))
-//     .connect();
+const redisClient = createClient({
+        url:`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+        password : process.env.REDIS_PASSWORD
+    });
+redisClient.connect().catch(console.error);
 
-// let redisStore = new RedisStore({
-//     client: redisClient
-// })
+let redisStore = new RedisStore({
+    client: redisClient
+})
 
 
 const pageRouter = require('./routes/page');
@@ -43,7 +42,7 @@ const sessionOption = {
         httpOnly:true,
         secure:false
     },
-    // store:redisStore
+    store:redisStore
 }
 
 const app = express();
