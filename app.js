@@ -13,6 +13,7 @@ const helmet = require('helmet');
 const hpp = require('hpp');
 const {createClient} = require('redis');
 const {RedisStore} = require('connect-redis');
+const cors = require('cors');
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ const initApp = async()=>{
         client: redisClient
     })
 
+    console.log(">>> RedisStore 생성됨:", redisStore);
 
 
 
@@ -95,6 +97,11 @@ const initApp = async()=>{
     app.use(cookieParser(process.env.COOKIE_SECRET));
 
     app.use(session(sessionOption));
+
+    app.use(cors({
+        origin:true,
+        credentials:true
+    }))
 
 
     /**
