@@ -43,7 +43,7 @@ exports.renderMain = async (req,res,next) => {
                 // 아래의 리터럴 쿼리문을 'liked' 라는 이름으로 사용
                 [Sequelize.literal(`(
                     SELECT count(*) FROM TwitLike 
-                    WHERE TwitLike.PostId = POST.ID
+                    WHERE TwitLike.PostId = Post.Id
                     AND TwitLike.UserId = ${userId}
                 ) > 0`),
                 'liked'
