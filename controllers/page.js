@@ -19,45 +19,49 @@ exports.renderMain = async (req,res,next) => {
 
     console.log('where : ',where);
 
-    const posts = await Post.findAll({
-        order:[['createdAt','DESC']],
-        include:[{
-            model:User,
-            attributes:['id','nickname']
-        },
-        // 게시글 별 좋아요 목록을 전부 가져오는 것보다 좋아요 여부만 가져오는 것이 빠를 것 같다.
-        // 데이터가 많은 경우의 속도 비교 테스트는 아직 못해봄
-        // {
-        //     model:User,
-        //     as : 'Twitter',
-        //     through:{
-        //         attributes:['UserId','PostId']
-        //     },
-        // }
-        ],
-        attributes:[
-            'content',
-            'img',
-            'id',
-            // 아래의 리터럴 쿼리문을 'liked' 라는 이름으로 사용
-            [Sequelize.literal(`(
-                SELECT count(*) FROM TWITLIKE 
-                WHERE TWITLIKE.POSTID = POST.ID
-                AND TWITLIKE.USERID = ${userId}
-            ) > 0`),
-            'liked'
-        ]
-        ],
-        where
-    });
+    try {
+        const posts = await Post.findAll({
+            order:[['createdAt','DESC']],
+            include:[{
+                model:User,
+                attributes:['id','nickname']
+            },
+            // 게시글 별 좋아요 목록을 전부 가져오는 것보다 좋아요 여부만 가져오는 것이 빠를 것 같다.
+            // 데이터가 많은 경우의 속도 비교 테스트는 아직 못해봄
+            // {
+            //     model:User,
+            //     as : 'Twitter',
+            //     through:{
+            //         attributes:['UserId','PostId']
+            //     },
+            // }
+            ],
+            attributes:[
+                'content',
+                'img',
+                'id',
+                // 아래의 리터럴 쿼리문을 'liked' 라는 이름으로 사용
+                [Sequelize.literal(`(
+                    SELECT count(*) FROM TWITLIKE 
+                    WHERE TWITLIKE.POSTID = POST.ID
+                    AND TWITLIKE.USERID = ${userId}
+                ) > 0`),
+                'liked'
+            ]
+            ],
+            where
+        });
 
-    res.render('main',
-        {
-            title:'NodeBird',
-            twits:posts
-            // twits:[]
-        }
-    )
+        res.render('main',
+            {
+                title:'NodeBird',
+                twits:posts
+                // twits:[]
+            }
+        )
+    } catch (error) {
+        console.error('여기가 문제라는걸텐데???',error);
+    }
 };
 
 exports.renderJoin = (req,res,next) => {
