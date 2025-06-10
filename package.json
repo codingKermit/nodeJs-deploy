@@ -4,7 +4,7 @@
   "description": "node.js로 sns 만들기",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production PORT=80 pm2 start server.js -i -1",
+    "start": "cross-env NODE_ENV=production PORT=80 pm2 start server.js -i 0",
     "dev": "nodemon server",
     "test": "NODE_ENV=test jest --silent",
     "coverage": "jest --coverage"
