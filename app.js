@@ -27,6 +27,8 @@ dotenv.config({
     path:`.env.${env}`
 });
 
+console.log('env file name : ',`.env.${env}`);
+
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
