@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production PORT=80 pm2 start server.js -i -1",
-    "dev": "nodemon server",
+    "dev": "cross-env NODE_ENV=development PORT=8001 nodemon server",
     "test": "NODE_ENV=test jest --silent",
     "coverage": "jest --coverage"
   },

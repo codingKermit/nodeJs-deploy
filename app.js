@@ -14,10 +14,14 @@ const hpp = require('hpp');
 const {createClient} = require('redis');
 const {RedisStore} = require('connect-redis');
 const cors = require('cors');
+const logger = require('./logger.js');
 
 dotenv.config();
 
 const env = process.env.NODE_ENV || 'development';
+
+console.log('env : ',process.env);
+
 dotenv.config({
     path:`.env.${env}`
 });
