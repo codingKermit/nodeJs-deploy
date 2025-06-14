@@ -24,7 +24,8 @@ const env = process.env.NODE_ENV || 'development';
 console.log('env : ',process.env.NODE_ENV);
 
 dotenv.config({
-    path:`.env.${env}`
+    path:`.env.${env}`,
+    override:true
 });
 
 console.log('env file name : ',`.env.${env}`);
