@@ -18,7 +18,7 @@ module.exports = () =>{
         // GPT : 커스텀 헤더를 설정. 인터페이스에서는 string이라고 되어있지만 Map 객체를 받음
         // customHeaders: ''
     },async (accessToken,refreshToken,profile,done)=>{
-        logger.info('profile :',profile);
+        // logger.info('profile :',profile);
         try {
             const exUser = await User.findOne({where:{snsId : profile.id, provider:'kakao'}});
             if(exUser){
