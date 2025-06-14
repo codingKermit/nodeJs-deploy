@@ -17,6 +17,11 @@ const cors = require('cors');
 
 dotenv.config();
 
+const env = process.env.NODE_ENV || 'development';
+dotenv.config({
+    path:`.env.${env}`
+});
+
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
