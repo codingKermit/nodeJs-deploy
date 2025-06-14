@@ -7,7 +7,8 @@ const userCache = require('../passport/cache');
 exports.afterUploadImage = (req,res)=>{
     console.log(req.file);
 
-    res.json({url:`/img/${req.file.filename}`});
+    res.json({url:req.file.location});
+    // res.json({url:`/img/${req.file.filename}`});
 }
 
 exports.uploadPost = async (req,res,next)=>{

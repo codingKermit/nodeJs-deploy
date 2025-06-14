@@ -5,6 +5,16 @@ const { afterUploadImage, uploadPost, like, unlike, deletePost, userPost } = req
 const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
+const multerS3 = require('multer-s3');
+const { S3Client } = require("@aws-sdk/client-s3");
+
+const s3 = new S3Client({
+    credentials:{
+        accessKeyId : process.env.S3_ACCESS_KEY,
+        secretAccessKey : process.env.S3_SECRET_ACCESS_KEY
+    },
+    region: "ap-northeast-2",
+});
 
 try {
     fs.readdirSync('uploads');
@@ -12,23 +22,14 @@ try {
     fs.mkdirSync('uploads');
 }
 
-const upload = multer({
-    storage:multer.diskStorage({
-        destination(req,file,cb){
-            // 파일이 저장될 경로가 유동적이라면 조건에 따라 나눌 수 있다. 하지만 해당하는 디렉토리는 존재해야한다
-            cb(null,'uploads/');
-        },
-        // destination 옵션은 string 을 파라미터로 받을 수 있다. 파일이 업로드 될 디렉토리가 고정적이라면 아래와 같이 사용하여도 무방하다
-        // destination:'uploads/',
-        filename(req,file,cb){
-            // console.log(file);
-            const ext = path.extname(file.originalname); // 확장자
-            
-            // path.basename() 의 결과 비교 확인용 로그
-            console.log('basename with 1 params : ', path.basename(file.originalname)); // 확장자가 제거되지 않은 파일명 반환 
-            console.log('basename with 2 params : ', path.basename(file.originalname,ext)); // 확장자가 제거된 파일명 반환
 
-            cb(null,path.basename(file.originalname,ext)+Date.now()+ext);
+
+const upload = multer({
+    storage:multerS3({
+        s3,
+        bucket:'nodebird-study-codingkermit',
+        key(req,file,cb){
+            cb(null,`original/${Date.now()}_${file.originalname}`);
         }
     }),
     limits:{
