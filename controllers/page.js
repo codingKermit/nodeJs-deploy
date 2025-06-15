@@ -2,6 +2,11 @@ const Hashtag = require('../models/hashtag');
 const Post = require('../models/post');
 const User = require('../models/user');
 const {Sequelize} = require('sequelize');
+const AWS = require('aws-sdk');
+
+const s3 = new AWS.S3();
+
+console.log('s3',s3);
 
 exports.renderMain = async (req,res,next) => {
     // console.log('session : ',req.session);
@@ -17,7 +22,7 @@ exports.renderMain = async (req,res,next) => {
 
     if(sType) where[sType] = sKeyword;
 
-    console.log('where : ',where);
+    // console.log('where : ',where);
 
     try {
         const posts = await Post.findAll({
@@ -51,6 +56,12 @@ exports.renderMain = async (req,res,next) => {
             ],
             where
         });
+
+        // console.log('posts :',posts);
+
+        // posts.map(post => {
+
+        // })
 
         res.render('main',
             {
