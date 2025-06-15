@@ -6,8 +6,6 @@ const AWS = require('aws-sdk');
 
 const s3 = new AWS.S3();
 
-console.log('s3',s3);
-
 exports.renderMain = async (req,res,next) => {
     // console.log('session : ',req.session);
 
@@ -57,11 +55,14 @@ exports.renderMain = async (req,res,next) => {
             where
         });
 
-        // console.log('posts :',posts);
-
-        // posts.map(post => {
-
-        // })
+        posts.map(post => {
+            if(post.img){
+                const url = new URL(post.img);
+                const path = url.pathname.slice(1);
+                const imageUrl = getPresignedImageUrl(path);
+                post.imgUrl = imageUrl;
+            }
+        })
 
         res.render('main',
             {
@@ -71,7 +72,7 @@ exports.renderMain = async (req,res,next) => {
             }
         )
     } catch (error) {
-        console.error('여기가 문제라는걸텐데???',error);
+        console.error('메인 에러',error);
     }
 };
 
@@ -107,4 +108,13 @@ exports.renderHashtag = async (req,res,next) => {
             twits : posts
         });
     }
+}
+
+
+function getPresignedImageUrl(key) {
+  return s3.getSignedUrl('getObject', {
+    Bucket: 'nodebird-study-codingkermit',
+    Key: key,
+    Expires: 300,
+  });
 }
