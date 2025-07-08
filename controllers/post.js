@@ -5,9 +5,12 @@ const User = require('../models/user');
 const userCache = require('../passport/cache');
 
 exports.afterUploadImage = (req,res)=>{
-    console.log(req.file);
+    // console.log(req.file);
+    const originalUrl = req.file.location;
+    const url = originalUrl.replace(/\/original\//,'/thumb/');
 
-    res.json({url:req.file.location});
+    res.json({url, originalUrl});
+    // res.json({url:req.file.location});
     // res.json({url:`/img/${req.file.filename}`});
 }
 

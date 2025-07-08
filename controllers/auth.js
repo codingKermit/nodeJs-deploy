@@ -59,7 +59,7 @@ exports.logout = async (req,res,next) => {
     
     const accessToken = req.session.passport.user?.accessToken;
 
-    console.log('accessToken',accessToken);
+    // console.log('accessToken',accessToken);
     if(accessToken){
         await fetch('https://kapi.kakao.com/v1/user/logout',{
             method:'POST',
@@ -69,7 +69,7 @@ exports.logout = async (req,res,next) => {
             },
         })
         .then((res)=>{
-            console.log('res : ',res);
+            // console.log('res : ',res);
             if(res.status !== 200){
 
             }
@@ -85,7 +85,7 @@ exports.logout = async (req,res,next) => {
 }
 
 exports.update = async (req,res,next) => {
-    console.log('nickname : ' , req.body.nickname);
+    // console.log('nickname : ' , req.body.nickname);
 
     const id = req.user.id;
 
@@ -97,7 +97,7 @@ exports.update = async (req,res,next) => {
         nickname
     })
     .then(async (result)=>{
-        console.log('result',result);
+        // console.log('result',result);
 
         // 회원정보 변경 시 캐싱 제거
         delete userCache[id];

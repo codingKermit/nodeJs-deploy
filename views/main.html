@@ -74,6 +74,7 @@
           .then((res) => {
             document.getElementById('img-url').value = res.data.url;
             document.getElementById('img-preview').src = res.data.url;
+            document.getElementById('img-preview').onerror = function(){ this.src=res.data.originalUrl};
             document.getElementById('img-preview').style.display = 'inline';
           })
           .catch((err) => {
