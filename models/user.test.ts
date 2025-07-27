@@ -1,7 +1,8 @@
-const Sequelize = require('sequelize');
-const User = require('./user');
-const config = require('../config/config.json')['test'];
-const sequelize = new Sequelize(
+import Sequelize from 'sequelize';
+import User from './user';
+import configObj from '../config/config';
+const config = configObj['test'];
+const sequelize = new Sequelize.Sequelize(
     config.database, config.username, config.password, config
 );
 
@@ -18,7 +19,7 @@ describe('User 모델', () => {
             },
             Post: {}
         };
-        User.associate(db);
+        User.associate();
         expect(db.User.hasMany).toHaveBeenCalledWith(db.Post);
         expect(db.User.belongsToMany).toHaveBeenCalledTimes(3);
     })

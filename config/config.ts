@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-module.exports = {
+export default {
   development: {
     username: "root",
     password: process.env.SEQUELIZE_PASSWORD,
@@ -22,4 +22,4 @@ module.exports = {
     host: "127.0.0.1",
     dialect: "mysql"
   }
-}
+} as const;

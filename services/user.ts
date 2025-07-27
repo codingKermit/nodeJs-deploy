@@ -1,19 +1,20 @@
-const User = require('../models/user');
-const userCache = require('../passport/cache');
+import redisClient from '../redisClient'
 
-exports.follow = async (id, followId)=>{
+import User from '../models/user';
+
+const follow = async (id:number, followId:number)=>{
     const user = await User.findOne({where:{id}});
     const targetUser = await User.findOne({where:{id:followId}})
     if(user && targetUser){
         await user.addFollowing(targetUser);
-        delete userCache[id];
+        redisClient.del(`user:${id}`);
         return 'ok';
     } else {
         return 'no user';
     }
 }
 
-exports.unfollow = async (id,unfollowId) => {
+const unfollow = async (id:number,unfollowId:number) => {
     const user = await User.findOne({where:{id}});
     const targetUser = await User.findOne({where:{id:unfollowId}});
     if(user && targetUser){
@@ -23,3 +24,5 @@ exports.unfollow = async (id,unfollowId) => {
         return 'no user';
     }
 }
+
+export {follow, unfollow}

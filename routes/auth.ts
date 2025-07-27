@@ -1,7 +1,7 @@
-const express = require('express');
-const passport = require('passport');
-const { isNotLoggedIn, isLoggedIn } = require('../middlewares');
-const { join, login, logout, passwordCheck, update } = require('../controllers/auth');
+import express from 'express';
+import passport from 'passport';
+import { isNotLoggedIn, isLoggedIn } from '../middlewares';
+import { join, login, logout, update } from '../controllers/auth';
 const router = express.Router();
 
 router.post('/join',isNotLoggedIn, join);
@@ -17,4 +17,4 @@ router.get('/kakao/callback',passport.authenticate('kakao',{
 
 router.post('/update',isLoggedIn,update)
 
-module.exports = router;
+export default router;

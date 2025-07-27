@@ -1,4 +1,6 @@
-exports.isLoggedIn = (req,res,next) =>{
+import { RequestHandler } from "express";
+
+const isLoggedIn:RequestHandler = (req,res ,next) =>{
 
     if(req.isAuthenticated()){
         next();
@@ -7,7 +9,7 @@ exports.isLoggedIn = (req,res,next) =>{
     }
 }
 
-exports.isNotLoggedIn = (req,res,next) => {
+const isNotLoggedIn:RequestHandler = (req,res,next) => {
     if(!req.isAuthenticated()){
         next();
     } else {
@@ -15,3 +17,5 @@ exports.isNotLoggedIn = (req,res,next) => {
         res.redirect(`/?error=${message}`);
     }
 }
+
+export {isLoggedIn, isNotLoggedIn};

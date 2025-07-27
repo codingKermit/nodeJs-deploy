@@ -1,12 +1,13 @@
-const Hashtag = require('../models/hashtag');
-const Post = require('../models/post');
-const User = require('../models/user');
-const {Sequelize} = require('sequelize');
-const AWS = require('aws-sdk');
+import Hashtag from '../models/hashtag';
+import Post from '../models/post';
+import User from '../models/user';
+import {Sequelize} from 'sequelize';
+import AWS from 'aws-sdk';
+import { RequestHandler } from 'express';
 
 const s3 = new AWS.S3();
 
-exports.renderMain = async (req,res,next) => {
+const renderMain : RequestHandler = async (req,res,next) => {
     // console.log('session : ',req.session);
 
     const userId = req.user?.id ?? 0;
@@ -16,11 +17,11 @@ exports.renderMain = async (req,res,next) => {
     const sType = query?.s_type;
     const sKeyword = query?.s_keyword;
 
-    const where = {};
+    const where :any = {};
 
-    if(sType) where[sType] = sKeyword;
-
-    // console.log('where : ',where);
+    if(sType && typeof sType == 'string') {
+        where[sType] = sKeyword;
+    }
 
     try {
         const posts = await Post.findAll({
@@ -29,21 +30,11 @@ exports.renderMain = async (req,res,next) => {
                 model:User,
                 attributes:['id','nickname']
             },
-            // 게시글 별 좋아요 목록을 전부 가져오는 것보다 좋아요 여부만 가져오는 것이 빠를 것 같다.
-            // 데이터가 많은 경우의 속도 비교 테스트는 아직 못해봄
-            // {
-            //     model:User,
-            //     as : 'Twitter',
-            //     through:{
-            //         attributes:['UserId','PostId']
-            //     },
-            // }
             ],
             attributes:[
                 'content',
                 'img',
                 'id',
-                // 아래의 리터럴 쿼리문을 'liked' 라는 이름으로 사용
                 [Sequelize.literal(`(
                     SELECT count(*) FROM TwitLike 
                     WHERE TwitLike.PostId = Post.Id
@@ -68,7 +59,6 @@ exports.renderMain = async (req,res,next) => {
             {
                 title:'NodeBird',
                 twits:posts
-                // twits:[]
             }
         )
     } catch (error) {
@@ -76,19 +66,19 @@ exports.renderMain = async (req,res,next) => {
     }
 };
 
-exports.renderJoin = (req,res,next) => {
+const renderJoin : RequestHandler = (req,res,next) => {
     res.render('join',{title:'회원 가입 - NodeBird'});
 };
 
-exports.renderProfile = (req,res,next) => {
+const renderProfile :RequestHandler = (req,res,next) => {
     res.render('profile',{title:'내 정보 - NodeBird'});
 };
 
-exports.renderUpdate = (req,res,next)=>{
+const renderUpdate : RequestHandler = (req,res,next)=>{
     res.render('update',{title:'회원정보 업데이트 - NodeBird'})
 }
 
-exports.renderHashtag = async (req,res,next) => {
+const renderHashtag : RequestHandler = async (req,res,next) => {
     console.log('hashtag : ',req.query.hashtag);
     const query = req.query.hashtag;
 
@@ -97,7 +87,7 @@ exports.renderHashtag = async (req,res,next) => {
     } else {
         const hashtag = await Hashtag.findOne({
             where:{
-                title : query
+                title : query as string
             }
         })
 
@@ -110,11 +100,12 @@ exports.renderHashtag = async (req,res,next) => {
     }
 }
 
-
-function getPresignedImageUrl(key) {
+function getPresignedImageUrl(key : string) {
   return s3.getSignedUrl('getObject', {
     Bucket: 'nodebird-study-codingkermit',
     Key: key,
     Expires: 300,
   });
 }
+
+export {renderMain,renderHashtag,renderJoin,renderProfile,renderUpdate}

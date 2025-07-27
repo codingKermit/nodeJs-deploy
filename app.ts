@@ -1,19 +1,19 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const morgan = require('morgan');
-const path = require('path');
-const session = require('express-session');
-const nunjucks = require('nunjucks');
-const dotenv = require('dotenv');
-const models = require('./models');
-const sequelize = models.sequelize;
-const passport = require('passport');
-const passportConfig = require('./passport');
-const helmet = require('helmet');
-const hpp = require('hpp');
-const {createClient} = require('redis');
-const {RedisStore} = require('connect-redis');
-const cors = require('cors');
+import express, { Request, Response, NextFunction } from 'express';
+import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
+import path from 'path';
+import session from 'express-session';
+import nunjucks from 'nunjucks';
+import dotenv from 'dotenv';
+import {sequelize} from './models';
+import passport from 'passport';
+import passportConfig from './passport';
+import helmet from 'helmet';
+import hpp from 'hpp';
+import {createClient} from 'redis';
+import {RedisStore} from 'connect-redis';
+import cors from 'cors';
+import redisClient from './redisClient';
 
 dotenv.config();
 
@@ -24,17 +24,12 @@ dotenv.config({
     override:true
 });
 
-const pageRouter = require('./routes/page');
-const authRouter = require('./routes/auth');
-const postRouter = require('./routes/post');
-const userRouter = require('./routes/user');
+import pageRouter from './routes/page';
+import authRouter from './routes/auth';
+import postRouter from './routes/post';
+import userRouter from './routes/user';
 
-
-const redisClient = createClient({
-        url:`redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-        password : process.env.REDIS_PASSWORD
-    });
-redisClient.on('error', (err) => console.error('Redis Client Error', err));
+redisClient.on('error', (err:Error) => console.error('Redis Client Error', err));
 redisClient.connect();
 
 let redisStore = new RedisStore({
@@ -44,12 +39,13 @@ let redisStore = new RedisStore({
 const sessionOption = {
     resave:false,
     saveUninitialized:false,
-    secret:process.env.COOKIE_SECRET,
+    secret:process.env.COOKIE_SECRET!,
     cookie:{
         httpOnly:true,
         secure:false
     },
-    store:redisStore
+    store:redisStore,
+    proxy:false
 }
 
 const app = express();
@@ -66,7 +62,7 @@ sequelize.sync({force:false})
 .then(()=>{
     console.log('연결 성공');
 })
-.catch((err)=>{
+.catch((err : Error)=>{
     console.error(err);
 })
 
@@ -123,11 +119,11 @@ app.use((req,res,next)=>{
     next(error);
 })
 
-app.use((err,req,res,next)=>{
+app.use((err : any ,req : Request, res : Response,next : NextFunction)=>{
     res.locals.message = err.message;
     res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
     res.status(err.status || 500);
     res.render('error');
 })
 
-module.exports = app;
+export default app;
